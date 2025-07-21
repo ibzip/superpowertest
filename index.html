@@ -2,31 +2,53 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Scroll‑Animated Hero</title>
+
+  <!-- Hint the browser to start fetching the first few frames early -->
+  <link rel="preload" as="image" href="images/0001.png">
+  <link rel="preload" as="image" href="images/0002.png">
+  <link rel="preload" as="image" href="images/0003.png">
+
   <link rel="stylesheet" href="style.css" />
+  <script defer src="script.js"></script>
 </head>
 <body>
 
-  <!--  HERO  (fixed – always visible) ----------------------------------->
-  <header id="hero" class="hero">
+  <!-- -------------------- HERO (fixed) -------------------- -->
+  <header class="hero">
+
+    <!-- Canvas paints the sequence -->
+    <canvas id="seq" aria-label="Animated hero"></canvas>
+
+    <!-- Tint for legibility -->
     <div class="overlay"></div>
 
+    <!-- Heading / CTA -->
     <div class="hero-inner">
-      <h1>Scroll to Animate</h1>
-      <p>Frames 0001 → 0060 change with scroll</p>
+      <h1>Peak Performance Starts Here</h1>
+      <p>Scroll to watch the journey unfold</p>
+      <button onclick="document.getElementById('main')
+                       .scrollIntoView({behavior:'smooth'})">
+        Enter
+      </button>
+    </div>
+
+    <!-- Loading screen -->
+    <div id="loading">
+      <span id="percent">0</span>%
     </div>
   </header>
 
-  <!--  PAGE CONTENT (just filler so you can scroll)  -------------------->
-  <main>
-    <section style="height:300vh;padding:3rem">
+  <!-- -------------------- PAGE CONTENT -------------------- -->
+  <main id="main">
+    <section style="height:280vh;padding:3rem">
       <h2>Keep scrolling…</h2>
-      <p>The hero above stays fixed while the background animates.</p>
+      <p>The hero stays fixed while the background animates.</p>
     </section>
   </main>
 
-  <script src="script.js"></script>
 </body>
 </html>
 

@@ -1,34 +1,59 @@
-/* ---- base ----------------------------------------------------------- */
+/* ---------- base -------------------------------------------------- */
 *{margin:0;padding:0;box-sizing:border-box}
-html,body{height:100%;font-family:system-ui,sans-serif}
-
-/* ---- hero ----------------------------------------------------------- */
-.hero{
-  position:fixed;
-  inset:0;                     /* top:0; right:0; bottom:0; left:0 */
-  background-size:cover;
-  background-position:center;
-  z-index:10;
-  display:flex;
-  align-items:center;
-  justify-content:center;
+html,body{
+  height:100%;
+  font-family:system-ui,Roboto,Helvetica,Arial,sans-serif;
+  color:#111;
+  scroll-behavior:smooth;
 }
+
+/* ---------- hero -------------------------------------------------- */
+.hero{
+  position:fixed; inset:0;                  /* full screen, sticks */
+  background:#000;                          /* fallback colour */
+  display:flex; align-items:center; justify-content:center;
+  padding-top:env(safe-area-inset-top);     /* iOS notch */
+  overflow:hidden;
+  z-index:10;
+}
+
+/* Canvas stretches to hero bounds */
+canvas#seq{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 
 .overlay{
   position:absolute;inset:0;
   background:rgba(0,0,0,.45);
+  opacity:0;                                /* fades in after preload */
+  transition:opacity .4s ease;
 }
 
 .hero-inner{
-  position:relative;
-  z-index:1;
-  color:#fff;
-  text-align:center;
-  padding:0 1.5rem;
+  position:relative;z-index:1;
+  text-align:center;color:#fff;padding:0 1.5rem;
 }
 .hero-inner h1{font-size:clamp(2.5rem,6vw,4.5rem);margin-bottom:.5rem}
-.hero-inner p {font-size:1.1rem}
+.hero-inner p {font-size:1.15rem;margin-bottom:1.5rem}
 
-/* ---- push main content below full‑screen hero ----------------------- */
+/* CTA button */
+button{
+  min-height:44px;             /* mobile tap target */
+  padding:.9rem 1.8rem;font-size:1rem;
+  background:#ff6361;color:#fff;border:none;border-radius:5px;cursor:pointer
+}
+button:hover{background:#e05050}
+
+/* Loading overlay */
+#loading{
+  position:absolute;inset:0;
+  display:flex;align-items:center;justify-content:center;
+  background:#000;               /* solid until first frame ready */
+  color:#fff;font-size:1.5rem;z-index:2;
+}
+
+/* Push main content below hero */
 main{margin-top:100vh}
+
+/* ---------- accessibility ----------------------------------------- */
+@media (prefers-reduced-motion: reduce){
+  body{scroll-behavi
 
