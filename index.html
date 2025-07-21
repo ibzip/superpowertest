@@ -6,36 +6,35 @@
         content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Scroll‑Animated Hero</title>
 
-  <!-- Pre‑warm the first few frames -->
+  <!-- Preload first few frames so hero isn’t black -->
   <link rel="preload" as="image" href="images/0001.png">
   <link rel="preload" as="image" href="images/0002.png">
   <link rel="preload" as="image" href="images/0003.png">
   <link rel="preload" as="image" href="images/0004.png">
 
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css">
   <script defer src="script.js"></script>
 </head>
 <body>
 
-  <!-- ---------- HERO (fixed full‑screen) ---------- -->
+  <!-- HERO ----------------------------------------------------------->
   <header class="hero">
     <canvas id="seq" aria-label="Animated hero"></canvas>
     <div class="overlay"></div>
 
     <div class="hero-inner">
-      <h1>Peak Performance Starts Here</h1>
-      <p>Scroll to watch the journey unfold</p>
+      <h1>Peak Performance Starts Here</h1>
+      <p>Scroll to watch the journey unfold</p>
       <button onclick="document.getElementById('main')
                        .scrollIntoView({behavior:'smooth'})">
         Enter
       </button>
     </div>
 
-    <!-- Loading overlay -->
     <div id="loading"><span id="percent">0</span>%</div>
   </header>
 
-  <!-- ---------- PAGE CONTENT ---------- -->
+  <!-- CONTENT -------------------------------------------------------->
   <main id="main">
     <section style="height:280vh;padding:3rem">
       <h2>Keep scrolling…</h2>

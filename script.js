@@ -1,82 +1,76 @@
-/* ==========================================================
-   Scroll‑driven hero — full preload, aspect‑ratio cover,
-   immune to address‑bar collapse on mobile browsers
-   ========================================================== */
-const FRAMES  = 60;          // 0001…0060
-const SPAN_PX = 3_000;       // scroll span in px
+/* =========================================================
+   Mobile‑safe scroll animation
+   ========================================================= */
+const FRAMES  = 60;           // 0001‑0060
+const SPAN    = 3_000;        // px mapped to sequence
 const DPR     = devicePixelRatio || 1;
 
-/* ---------- lock canvas size to largest viewport ------------ */
-const cvs  = document.getElementById('seq');
-const ctx  = cvs.getContext('2d');
-const hero = document.querySelector('.hero');
+const cvs   = document.getElementById('seq');
+const ctx   = cvs.getContext('2d');
+const hero  = document.querySelector('.hero');
+const pct   = document.getElementById('percent');
+const loadBox = document.getElementById('loading');
+const overlay = document.querySelector('.overlay');
 
+/* ---------- viewport height fix (address‑bar safe) ------------- */
+function setVH(){
+  const cssPx = Math.max(innerHeight, screen.height);
+  document.documentElement.style.setProperty('--vh', `${cssPx}px`);
+}
+setVH();
+addEventListener('resize', setVH);           // orientation change
+
+/* ---------- lock canvas size ----------------------------------- */
 function lockSize(){
-  const w = innerWidth;
-  const h = Math.max(innerHeight, screen.height);    // avoids shrink
-  hero.style.height = `${h}px`;
-  cvs.width  = w * DPR;
-  cvs.height = h * DPR;
-  ctx.setTransform(DPR,0,0,DPR,0,0);
+  cvs.width  = innerWidth  * DPR;
+  cvs.height = Math.max(innerHeight, screen.height) * DPR;
 }
 lockSize();
-/* Only resize on orientation change (width change) */
-addEventListener('resize', ()=>{
-  if (innerWidth !== cvs.width / DPR) lockSize();
-});
+addEventListener('resize', lockSize);
 
-/* ---------- preload every PNG -------------------------------- */
-const imgs   = new Array(FRAMES);
-let loaded   = 0;
-const pctBox = document.getElementById('percent');
-const loader = document.getElementById('loading');
-const overlay= document.querySelector('.overlay');
+/* ---------- preload all frames --------------------------------- */
+const imgs = new Array(FRAMES);
+let loaded = 0;
 
 for(let i=0;i<FRAMES;i++){
-  const im = new Image();
-  im.src   = `images/${String(i+1).padStart(4,'0')}.png`;
-  im.onload = ()=>{
-    loaded++;
-    pctBox.textContent = Math.round(loaded/FRAMES*100);
-    if (loaded === FRAMES) init();
+  const img = new Image();
+  img.src   = `images/${String(i+1).padStart(4,'0')}.png`;
+  img.onload = ()=>{
+    if (++loaded === FRAMES) start();
+    pct.textContent = Math.round(loaded/FRAMES*100);
+    if (i === 0) { drawCover(img); }         // show first frame ASAP
   };
-  imgs[i] = im;
+  imgs[i] = img;
 }
 
-/* ---------- cover‑style draw helper -------------------------- */
+/* ---------- cover draw helper ---------------------------------- */
 function drawCover(img){
-  const cw = cvs.width  / DPR;
-  const ch = cvs.height / DPR;
+  const cssW = cvs.width  / DPR;
+  const cssH = cvs.height / DPR;
   const iw = img.naturalWidth;
   const ih = img.naturalHeight;
+  const scale = Math.max(cssW/iw, cssH/ih);      // cover
+  const dw = iw*scale, dh = ih*scale;
+  const dx = (cssW - dw)/2, dy = (cssH - dh)/2;
 
-  const scale = Math.max(cw/iw, ch/ih);   // cover
-  const dw = iw * scale;
-  const dh = ih * scale;
-  const dx = (cw - dw)/2;
-  const dy = (ch - dh)/2;
-
-  ctx.clearRect(0,0,cw,ch);
+  ctx.clearRect(0,0,cvs.width,cvs.height);
   ctx.drawImage(img, dx, dy, dw, dh);
 }
 
-/* ---------- start after preload ------------------------------ */
-function init(){
-  loader.style.display = 'none';
+/* ---------- once every frame is cached ------------------------- */
+function start(){
+  loadBox.style.display = 'none';
   overlay.style.opacity = .45;
-  drawCover(imgs[0]);                  // first frame
 
   if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
   let last = 0, ticking = false;
-
   addEventListener('scroll', ()=>{
     if (ticking) return;
     requestAnimationFrame(()=>{
-      const y   = Math.min(scrollY, SPAN_PX);
-      const pct = y / SPAN_PX;
-      const f   = Math.min(FRAMES-1, Math.round(pct*(FRAMES-1)));
-
+      const y   = Math.min(scrollY, SPAN);
+      const f   = Math.min(FRAMES-1,
+                     Math.round(y / SPAN * (FRAMES-1)));
       if (f !== last){ drawCover(imgs[f]); last = f; }
       ticking = false;
     });

@@ -10,33 +10,32 @@ html,body{
 /* ---------- hero -------------------------------------------------- */
 .hero{
   position:fixed; inset:0;
-  height:100lvh;                     /* largest viewport height */
-  background:#000;                   /* fallback colour */
-  display:flex; align-items:center; justify-content:center;
+  /* full device height incl. address bar (fallback set by JS) */
+  height:var(--vh,100lvh);
+  background:#000;
+  display:flex;align-items:center;justify-content:center;
   padding-top:env(safe-area-inset-top);
   overflow:hidden; z-index:10;
 }
 
-/* Canvas fills hero bounds */
-canvas#seq{position:absolute; inset:0; width:100%; height:100%}
+canvas#seq{position:absolute;inset:0;width:100%;height:100%}
 
 .overlay{
   position:absolute; inset:0;
   background:rgba(0,0,0,.45);
-  opacity:0;                         /* fade‑in after preload */
+  opacity:0;
   transition:opacity .4s ease;
 }
 
 .hero-inner{
   position:relative; z-index:1;
-  text-align:center; color:#fff;
-  padding:0 1.5rem;
+  text-align:center; color:#fff; padding:0 1.5rem;
 }
 .hero-inner h1{font-size:clamp(2.5rem,6vw,4.5rem); margin-bottom:.5rem}
 .hero-inner p {font-size:1.15rem; margin-bottom:1.5rem}
 
 button{
-  min-height:44px;                   /* mobile tap target */
+  min-height:44px;
   padding:.9rem 1.8rem;
   font-size:1rem;
   background:#ff6361; color:#fff;
@@ -45,7 +44,7 @@ button{
 }
 button:hover{background:#e05050}
 
-/* Loading screen */
+/* loader */
 #loading{
   position:absolute; inset:0;
   display:flex; align-items:center; justify-content:center;
@@ -53,10 +52,9 @@ button:hover{background:#e05050}
   font-size:1.5rem; z-index:2;
 }
 
-/* Push content below hero */
-main{margin-top:100lvh}
+/* push body below hero */
+main{margin-top:var(--vh,100lvh)}
 
-/* ---------- accessibility ----------------------------------------- */
 @media (prefers-reduced-motion: reduce){
   body{scroll-behavior:auto}
 }
